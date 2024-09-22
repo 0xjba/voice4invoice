@@ -83,6 +83,8 @@ export default function Home() {
   const [transactionDetails, setTransactionDetails] = useState<{amount: string; customer: string} | null>(null);
   const [hasEthereum, setHasEthereum] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [walletAddress, setWalletAddress] = useState<string | null>(null);
+
 
   useEffect(() => {
     if (webApp) {
@@ -105,6 +107,22 @@ export default function Home() {
       checkNetwork();
     }
   }, [formData.network]);
+
+  const connectWallet = async () => {
+    if (typeof window.ethereum !== 'undefined') {
+      try {
+        // Request account access
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        setWalletAddress(accounts[0]);
+        setHasEthereum(true);
+        checkNetwork();
+      } catch (error) {
+        console.error('Failed to connect wallet:', error);
+      }
+    } else {
+      alert('Please install MetaMask or another Ethereum wallet to use this feature.');
+    }
+  };
 
   const checkNetwork = async () => {
     if (window.ethereum && formData.network) {
@@ -312,8 +330,22 @@ export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-6 md:p-24">
       <div className="z-10 w-full max-w-2xl">
-        <h1 className="text-4xl font-bold mb-8 text-center"> Sales Invoice Generation & Attestation</h1>
-        <p >As a business owner, after completing a sale and receiving payment in crypto, you may want to provide your customers with more than just a transaction hash. That's where this tool comes in. Simply input the transaction hash, add your product details, and generate a detailed, attested invoice. The invoice can be verified by anyone, making it invaluable for preventing scams during invoice factoring or reimbursements.</p>
+        <h1 className="text-4xl font-bold mb-8 text-center">Sales Invoice Generation & Attestation</h1>
+        <p className="mb-6 text-gray-600">As a business owner, after completing a sale and receiving payment in crypto, you may want to provide your customers with more than just a transaction hash. That's where this tool comes in. Simply input the transaction hash, add your product details, and generate a detailed, attested invoice. The invoice can be verified by anyone, making it invaluable for preventing scams during invoice factoring or reimbursements.</p>
+        
+        {!walletAddress ? (
+          <button 
+            onClick={connectWallet}
+            className="w-full bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out mb-6"
+          >
+            Connect Wallet
+          </button>
+        ) : (
+          <div className="bg-gray-100 p-4 rounded-md mb-6">
+            <p className="text-sm"><span className="font-semibold">Connected Wallet:</span> {walletAddress}</p>
+          </div>
+        )}
+
         <form onSubmit={createAttestation} className="space-y-6 bg-white p-6 rounded-lg shadow-md">
           <div>
             <label htmlFor="network" className="block text-sm font-medium text-gray-700 mb-1">Network:</label>
