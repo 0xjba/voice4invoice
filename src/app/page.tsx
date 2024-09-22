@@ -172,13 +172,13 @@ export default function Home() {
     setIsLoading(true);
   
     if (!isCorrectNetwork) {
-      alert('Please switch to the correct network before creating attestation');
+      alert('Please switch to the correct network before creating invoice');
       setIsLoading(false);
       return;
     }
   
     if (!transactionDetails) {
-      alert('Please fetch transaction details before creating attestation');
+      alert('Please fetch transaction details before creating invoice');
       setIsLoading(false);
       return;
     }
@@ -220,7 +220,7 @@ export default function Home() {
         } 
       });
     } catch (error) {
-      console.error('Error creating attestation:', error);
+      console.error('Error creating invoice:', error);
       setResult({ error: error instanceof Error ? error.message : String(error) });
     } finally {
       setIsLoading(false);
@@ -250,7 +250,7 @@ export default function Home() {
       };
   
       // Title
-      drawText('Attestation Invoice', 50, currentY, { font: boldFont, size: 24 });
+      drawText('Sales Purchase Invoice', 50, currentY, { font: boldFont, size: 24 });
       currentY -= lineHeight * 2;
   
       const { attestation } = result;
@@ -312,7 +312,7 @@ export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-6 md:p-24">
       <div className="z-10 w-full max-w-2xl">
-        <h1 className="text-4xl font-bold mb-8 text-center">Transaction Attestation</h1>
+        <h1 className="text-4xl font-bold mb-8 text-center"> Sales Invoice Generation & Attestation</h1>
         <form onSubmit={createAttestation} className="space-y-6 bg-white p-6 rounded-lg shadow-md">
           <div>
             <label htmlFor="network" className="block text-sm font-medium text-gray-700 mb-1">Network:</label>
@@ -430,14 +430,14 @@ export default function Home() {
                 disabled={isLoading}
                 className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out disabled:opacity-50"
               >
-                {isLoading ? 'Generating Attestation...' : 'Generate Attestation'}
+                {isLoading ? 'Generating Invoice...' : 'Generate Invoice'}
               </button>
             </>
           )}
         </form>
         {result && isAttestationSuccess(result) && (
           <div className="mt-8 p-6 bg-green-100 text-green-700 rounded-lg shadow-md">
-            <h2 className="text-2xl font-bold mb-4">Attestation Created Successfully!</h2>
+            <h2 className="text-2xl font-bold mb-4">Invoice Created Successfully!</h2>
             <p className="text-lg mb-4">Full Attestation ID: <strong>{result.attestation.fullAttestationId}</strong></p>
             <button 
               onClick={downloadPdfInvoice}
@@ -449,7 +449,7 @@ export default function Home() {
         )}
         {result && !isAttestationSuccess(result) && (
           <div className="mt-8 p-6 bg-red-100 text-red-700 rounded-lg shadow-md">
-            <h2 className="text-2xl font-bold mb-4">Error Creating Attestation</h2>
+            <h2 className="text-2xl font-bold mb-4">Error Creating Invoice</h2>
             <p>{result.error}</p>
           </div>
         )}

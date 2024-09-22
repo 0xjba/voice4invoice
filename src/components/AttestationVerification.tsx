@@ -13,7 +13,7 @@ async function verifyAttestation(fullAttestationId: string) {
     console.log('Attestation query result:', result);
     return result;
   } catch (error) {
-    console.error('Error verifying attestation:', error);
+    console.error('Error verifying invoice:', error);
     throw error;
   }
 }
@@ -66,7 +66,7 @@ export default function AttestationVerification() {
       await verifyAttestation(jsonData.fullAttestationId);
       setVerificationResult({ 
         success: true, 
-        message: `Attestation with ID ${jsonData.fullAttestationId} verified successfully` 
+        message: `Invoice with ID ${jsonData.fullAttestationId} verified successfully` 
       });
     } catch (error) {
       console.error('Verification error:', error);
