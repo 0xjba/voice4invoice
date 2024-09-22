@@ -446,7 +446,7 @@ export default function Home() {
             >
               Download PDF/A-3 Invoice
             </button>
-          </div>
+           </div>
         )}
         {result && !isAttestationSuccess(result) && (
           <div className="mt-8 p-6 bg-red-100 text-red-700 rounded-lg shadow-md">
