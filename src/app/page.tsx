@@ -313,6 +313,7 @@ export default function Home() {
     <main className="flex min-h-screen flex-col items-center justify-between p-6 md:p-24">
       <div className="z-10 w-full max-w-2xl">
         <h1 className="text-4xl font-bold mb-8 text-center"> Sales Invoice Generation & Attestation</h1>
+        <p >As a business owner, after completing a sale and receiving payment in crypto, you may want to provide your customers with more than just a transaction hash. That's where this tool comes in. Simply input the transaction hash, add your product details, and generate a detailed, attested invoice. The invoice can be verified by anyone, making it invaluable for preventing scams during invoice factoring or reimbursements.</p>
         <form onSubmit={createAttestation} className="space-y-6 bg-white p-6 rounded-lg shadow-md">
           <div>
             <label htmlFor="network" className="block text-sm font-medium text-gray-700 mb-1">Network:</label>
