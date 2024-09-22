@@ -5,7 +5,6 @@ import { SignProtocolClient, SpMode, EvmChains, AttestationResult } from "@ethsi
 import AttestationVerification from '../components/AttestationVerification';
 import { ethers } from 'ethers';
 import { PDFDocument, StandardFonts, rgb } from 'pdf-lib';
-import Link from 'next/link';
 
 (BigInt.prototype as any).toJSON = function() {
   return this.toString();
@@ -251,7 +250,7 @@ export default function Home() {
       };
   
       // Title
-      drawText('Sales Invoice', 50, currentY, { font: boldFont, size: 24 });
+      drawText('Attestation Invoice', 50, currentY, { font: boldFont, size: 24 });
       currentY -= lineHeight * 2;
   
       const { attestation } = result;
@@ -311,48 +310,47 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-blue-100 to-indigo-200 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-3xl mx-auto">
-        <h1 className="text-4xl font-extrabold text-center text-indigo-900 mb-8">Generate Attested Invoices</h1>
-        <div className="bg-white shadow-2xl rounded-lg overflow-hidden">
-          <form onSubmit={createAttestation} className="space-y-6 p-8">
-            <div>
-              <label htmlFor="network" className="block text-sm font-medium text-gray-700 mb-1">Network:</label>
-              <select
-                id="network"
-                name="network"
-                value={formData.network}
-                onChange={handleInputChange}
-                required
-                className="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
-              >
-                <option value="">Select Network</option>
-                <option value="sepolia">Sepolia</option>
-              </select>
-            </div>
-            {formData.network && !isCorrectNetwork && (
-              <button 
-                type="button"
-                onClick={switchNetwork}
-                className="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out transform hover:scale-105"
-              >
-                Switch to {formData.network}
-              </button>
-            )}
-            {isCorrectNetwork && (
-              <>
+    <main className="flex min-h-screen flex-col items-center justify-between p-6 md:p-24">
+      <div className="z-10 w-full max-w-2xl">
+        <h1 className="text-4xl font-bold mb-8 text-center">Transaction Attestation</h1>
+        <form onSubmit={createAttestation} className="space-y-6 bg-white p-6 rounded-lg shadow-md">
+          <div>
+            <label htmlFor="network" className="block text-sm font-medium text-gray-700 mb-1">Network:</label>
+            <select
+              id="network"
+              name="network"
+              value={formData.network}
+              onChange={handleInputChange}
+              required
+              className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value="">Select Network</option>
+              <option value="sepolia">Sepolia</option>
+            </select>
+          </div>
+          {formData.network && !isCorrectNetwork && (
+            <button 
+              type="button"
+              onClick={switchNetwork}
+              className="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out"
+            >
+              Switch to {formData.network}
+            </button>
+          )}
+          {isCorrectNetwork && (
+            <>
               <div>
-              <label htmlFor="businessName" className="block text-sm font-medium text-gray-700 mb-1">Business Name:</label>
-                  <input
-                    type="text"
-                    id="businessName"
-                    name="businessName"
-                    value={formData.businessName}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
-                  />
-                </div>
+                <label htmlFor="businessName" className="block text-sm font-medium text-gray-700 mb-1">Business Name:</label>
+                <input
+                  type="text"
+                  id="businessName"
+                  name="businessName"
+                  value={formData.businessName}
+                  onChange={handleInputChange}
+                  required
+                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
               <div>
                 <label htmlFor="transactionHash" className="block text-sm font-medium text-gray-700 mb-1">Transaction Hash:</label>
                 <input
@@ -366,39 +364,97 @@ export default function Home() {
                 />
               </div>
               <button 
-                  type="submit"
-                  disabled={isLoading}
-                  className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded transition duration-300 ease-in-out transform hover:scale-105 disabled:opacity-50"
-                >
-                  {isLoading ? 'Generating Invoice...' : 'Generate Invoice'}
-                </button>
-              </>
-            )}
-          </form>
-        </div>
+                type="button"
+                onClick={fetchTransactionDetails}
+                disabled={isLoading}
+                className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out disabled:opacity-50"
+              >
+                {isLoading ? 'Fetching...' : 'Fetch Transaction Details'}
+              </button>
+              {transactionDetails && (
+                <div className="bg-gray-100 p-4 rounded-md">
+                  <p className="text-sm"><span className="font-semibold">Amount:</span> {transactionDetails.amount} ETH</p>
+                  <p className="text-sm"><span className="font-semibold">Customer:</span> {transactionDetails.customer}</p>
+                </div>
+              )}
+              <div>
+                <label htmlFor="invoiceDate" className="block text-sm font-medium text-gray-700 mb-1">Invoice Date:</label>
+                <input
+                  type="date"
+                  id="invoiceDate"
+                  name="invoiceDate"
+                  value={formData.invoiceDate}
+                  onChange={handleInputChange}
+                  required
+                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+              <div>
+                <label htmlFor="productName" className="block text-sm font-medium text-gray-700 mb-1">Product Name:</label>
+                <input
+                  type="text"
+                  id="productName"
+                  name="productName"
+                  value={formData.productName}
+                  onChange={handleInputChange}
+                  required
+                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+              <div>
+                <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">Category:</label>
+                <input
+                  type="text"
+                  id="category"
+                  name="category"
+                  value={formData.category}
+                  onChange={handleInputChange}
+                  required
+                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+              <div>
+                <label htmlFor="quantity" className="block text-sm font-medium text-gray-700 mb-1">Quantity:</label>
+                <input
+                  type="number"
+                  id="quantity"
+                  name="quantity"
+                  value={formData.quantity}
+                  onChange={handleInputChange}
+                  required
+                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+              <button 
+                type="submit"
+                disabled={isLoading}
+                className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out disabled:opacity-50"
+              >
+                {isLoading ? 'Generating Attestation...' : 'Generate Attestation'}
+              </button>
+            </>
+          )}
+        </form>
         {result && isAttestationSuccess(result) && (
-          <div className="mt-8 bg-green-100 text-green-800 rounded-lg shadow-lg p-6 animate-fade-in">
+          <div className="mt-8 p-6 bg-green-100 text-green-700 rounded-lg shadow-md">
             <h2 className="text-2xl font-bold mb-4">Attestation Created Successfully!</h2>
             <p className="text-lg mb-4">Full Attestation ID: <strong>{result.attestation.fullAttestationId}</strong></p>
             <button 
               onClick={downloadPdfInvoice}
-              className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded transition duration-300 ease-in-out transform hover:scale-105"
+              className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out"
             >
               Download PDF/A-3 Invoice
             </button>
           </div>
         )}
         {result && !isAttestationSuccess(result) && (
-          <div className="mt-8 bg-red-100 text-red-800 rounded-lg shadow-lg p-6 animate-fade-in">
+          <div className="mt-8 p-6 bg-red-100 text-red-700 rounded-lg shadow-md">
             <h2 className="text-2xl font-bold mb-4">Error Creating Attestation</h2>
             <p>{result.error}</p>
           </div>
         )}
-        <div className="mt-8 text-center">
-          <Link href="./verify" className="text-indigo-600 hover:text-indigo-800 font-semibold text-lg transition duration-300">
-            Verify Your Invoice
-          </Link>
-        </div>
+        
+        <AttestationVerification />
       </div>
     </main>
   );
